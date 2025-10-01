@@ -1,0 +1,23 @@
+.App {
+  text-align: center;
+  height: 100vh;
+}
+
+.App-header {
+  height: 100vh;         
+  padding-top: 5%;       
+  text-align: center;    
+  color: black;        
+}
+
+.App-header h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.App-header p {
+  font-size: 1.2rem;
+}
+
+
