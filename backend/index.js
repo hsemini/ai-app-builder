@@ -1,9 +1,10 @@
-// ---------- Imports ----------
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import OpenAI from "openai";
+import requirementRoutes from "./routes/requirements.js";
+import Requirement from "./models/requirement.js";
 
 dotenv.config();
 
@@ -22,82 +23,81 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
   .catch(err => console.error("MongoDB Error:", err));
 
-// ---------- Schema ----------
-const requirementSchema = new mongoose.Schema({
-  userInput: String,
-  appName: String,
-  entities: [String],
-  roles: [String],
-  features: [String],
-  createdAt: { type: Date, default: Date.now }
-});
-const Requirement = mongoose.model("Requirement", requirementSchema);
-
-// ---------- AI Extraction Function ----------
-
-/* function extractJson(text) {
-  const match = text.match(/\{[\s\S]*\}/); // find first {...} block
-  return match ? match[0] : null;
+// ---------- Unified AI Extraction ----------
+function cleanMapping(mapping) {
+  const cleaned = {};
+  for (const [role, details] of Object.entries(mapping)) {
+    cleaned[role] = {
+      entity: details.entity,
+      feature: details.feature,
+      fields: [...new Set(details.fields)] // remove duplicates
+    };
+  }
+  return cleaned;
 }
 
-function validateRequirements(obj) {
-  if (!obj) return false;
-  return (
-    typeof obj["App Name"] === "string" &&
-    Array.isArray(obj.Entities) &&
-    Array.isArray(obj.Roles) &&
-    Array.isArray(obj.Features)
-  );
-}
- */
-
-function normalizeArray(field) {
-  if (!field) return [];
-  if (Array.isArray(field)) return field;
-  if (typeof field === "string") return field.split(",").map(s => s.trim());
-  return [];
-}
-
-function validateRequirements(obj) {
-  if (!obj) return false;
-  obj.Entities = normalizeArray(obj.Entities);
-  obj.Roles = normalizeArray(obj.Roles);
-  obj.Features = normalizeArray(obj.Features);
-  return typeof obj["App Name"] === "string";
-}
-
-async function extractRequirements(description) {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [
-      {
-        role: "system",
-        content: `You are an assistant that extracts structured app requirements from natural language.
+async function extractRequirementsAndMapping(description) {
+  const unifiedPrompt = `
+You are an assistant that extracts structured app requirements AND maps roles to entities, features, and fields.
 Always return ONLY valid JSON with this structure:
+
 {
   "App Name": "...",
   "Entities": ["..."],
   "Roles": ["..."],
-  "Features": ["..."]
+  "Features": ["..."],
+  "Mapping": {
+    "RoleName": {
+      "entity": "Entity1",
+      "feature": "Feature1",
+      "fields": ["Field1", "Field2", "Field3"]
+    }
+  }
 }
 
 Guidelines:
-- Entities = the core data objects that the system must store in the database. 
-  * Include only nouns that correspond to data tables. 
-  * Exclude derived concepts like reports, analytics, dashboards, or summaries. 
-  * Always use singular, capitalized form(e.g., Student, Course, Grade). 
-  * Return Entities in the same order as they appear in the description. 
-  * If uncertain whether something is an Entity or a derived concept, exclude it. 
-  * Prefer fewer but accurate Entities.
-- Roles = actors (humans or systems) that interact with the app.
-- Features = actions the system should support, always in “verb + noun” form.
-- Do not explain, just return JSON.`
-      },
-      {
-        role: "user",
-        content: `Description: "${description}"`
-      }
-    ],
+- App Name:
+  * Choose a short descriptive title based on the description, and always append the word "System".
+  * Example: "Course Management System", "Library Tracking System".
+- Entities:
+  * Core data objects that must be stored in the database.
+  * Include only nouns that correspond to data tables.
+  * Exclude derived concepts like reports, dashboards, analytics.
+  * Always use singular, capitalized form (e.g., Student, Course, Grade).
+  * Return entities in the same order as they appear in the description.
+  * Prefer fewer but accurate entities.
+- Roles:
+  * Human/system actors that interact with the app.
+- Features:
+  * System actions in verb + noun form (e.g., "Add course", "Enroll student").
+- Mapping:
+  * Each role must appear exactly once in the JSON.
+  * Each role must map to exactly ONE entity, ONE feature, and ONE list of fields.
+  * Do not duplicate fields, features, or entities inside a role.
+  * Do not repeat roles multiple times.
+  * Fields must always be a clean array (no nesting, no repetition).
+  * If the role is "Admin", limit its entity to managing existing entities (e.g., Student, Course, Grade).
+  * Ensure Admin has only ONE feature (e.g., "Manage reports") and fields must only be reused IDs or attributes already defined.
+  * Each role must map to exactly ONE entity, ONE feature, and ONE list of fields.
+  * Fields should represent practical DB columns.
+  * Each entity includes one identifier (e.g., Student → StudentID).
+  * Do NOT generate meaningless IDs (e.g., GradeID, ReportID).
+  * Prefer mapping a role to its own entity if available (Student ↔ Student).
+  * Features must align with the role’s action from the description.
+  * Fields must belong only to that entity (no cross-role mixups).
+  * Do not duplicate or repeat roles/entities/features.
+  * If the entity is a link table (like Grade), use composite keys (StudentID + CourseID).
+  * Example fields:
+    - Student: [StudentID, Name, Email, Age]
+    - Course: [CourseID, Title, Code, Credits]
+    - Grade: [StudentID, CourseID, Score]
+
+Description: "${description}"
+  `;
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [{ role: "system", content: unifiedPrompt }],
     temperature: 0
   });
 
@@ -107,65 +107,44 @@ Guidelines:
     console.error("Failed to parse AI response:", err);
     return null;
   }
-
-/* try {
-    let rawText = response.choices[0].message.content;
-    let jsonText = extractJson(rawText);
-    let data = JSON.parse(jsonText);
-
-    if (!validateRequirements(data)) {
-      throw new Error("Invalid structure");
-    }
-
-    // cleanup entities
-    data.Entities = cleanEntities(data.Entities);
-
-    return data;
-  } catch (err) {
-    console.error("AI response invalid:", err);
-    return {
-      "App Name": "Unknown",
-      "Entities": [],
-      "Roles": [],
-      "Features": []
-    }; // fallback safe object
-  } */
-
 }
 
-// ---------- Express Route ----------
+// ---------- POST: Extract & Save ----------
 app.post("/api/parse", async (req, res) => {
   const { description } = req.body;
   if (!description) return res.status(400).json({ error: "Description is required" });
 
   try {
-    const requirements = await extractRequirements(description);
+    const result = await extractRequirementsAndMapping(description);
+    if (!result) return res.status(500).json({ error: "AI failed to extract requirements" });
 
-    console.log("Extracted Requirements:", requirements);
-
-    if (!requirements) {
-      return res.status(500).json({ error: "AI failed to extract requirements" });
-    }
-
-    // Save to MongoDB
+    // Save only the requirement part to MongoDB
     const reqDoc = new Requirement({
       userInput: description,
-      appName: requirements["App Name"] || "Unknown",
-      entities: requirements.Entities || [],
-      roles: requirements.Roles || [],
-      features: requirements.Features || []
+      appName: result["App Name"] || "Unknown",
+      entities: result.Entities || [],
+      roles: result.Roles || [],
+      features: result.Features || []
     });
     await reqDoc.save();
     console.log("Saved requirement:", reqDoc);
 
-    res.json(requirements);
+    // Debug log mapping
+    const clean = cleanMapping(result.Mapping);
+    console.log("Clean Mapping:", JSON.stringify(clean, null, 2));
+    result.Mapping = clean; // 
+
+    // Send full response (requirements + mapping) to frontend
+    res.json(result);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Something went wrong" });
   }
 });
 
+// ---------- Routes ----------
+app.use("/api/requirements", requirementRoutes);
+
 // ---------- Start Server ----------
-app.listen(process.env.PORT || 5000, () =>
-  console.log(`Server running on port ${process.env.PORT || 5000}`)
-);
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

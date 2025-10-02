@@ -1,109 +1,111 @@
+// 1. React + hooks
 import React, { useState } from "react";
-import { Container, Typography, TextField, Button, Box } from "@mui/material";
+
+// 2. Third-party (MUI)
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { Grid, Container } from "@mui/material";
+
+// 3. Local (your own components, css, utils)
 import "./App.css";
-import bgImage from "./assets/background.jpg";
-//import Background from "./components/background";
-//import Button from "./components/button"; 
-// test
+import ReferenceAccordion from "./components/Accordion";
+import BasicButton from "./components/BasicButton";
+import BasicTextArea from "./components/BasicTextArea";
+import DynamicTabs from "./components/Tab";
+
 
 function App() {
-  
-  const [description, setDescription] = useState("");   //to hold textarea text
-  const [response, setResponse] = useState(null);      // to hold backend response
+  const [description, setDescription] = useState("");   // textarea text
+  const [responseData, setResponseData] = useState(null); // holds unified backend response
 
   // Triggered when button is clicked
   const handleGenerate = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/parse", {
+      const response = await fetch("http://localhost:5000/api/parse", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ description }) // send description to backend
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description })
       });
-
-      const data = await res.json();
-      setResponse(data);   // display backend response
-    } catch (error) {
-      console.error("Error:", error);
+      const data = await response.json();
+      setResponseData(data);   // save entire response (includes requirements + mapping)
+    } catch (err) {
+      console.error("Error generating app:", err);
     }
   };
-  
+
   return (
-    
-   <Box
-      sx={{
-        minHeight: "100vh",
-       backgroundImage: `linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)), url(${bgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+    <Grid container sx={{
+      minHeight: "100vh",
+      width: "100%",
+      margin: 0,
+      padding: 0,
+    }}>
+      {/* Left side - App Builder */}
+      <Grid item  sx={{
+        width : "35%",
+        backgroundColor: "#f5f5f5",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-      }}
-    >
-   <Container maxWidth="sm" sx={{ mt: 8, textAlign: "center" }}>
-      {/* Title */}
-      <Typography variant="h3" gutterBottom>
-        AI App Builder
-      </Typography>
+        height: "100vh",
+        "&:hover": {
+          backgroundColor: "#ffffff",
+          boxShadow: 3,
+          borderRight: "2px solid #e0e0e0",
+          zIndex: 1
+        },
+      }}>
+        <Container maxWidth="sm" sx={{ mt: 8, textAlign: "center", p: 1 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              color: 'primary.main',
+              fontWeight: 'bold',
+              p: 1,
+              display: 'flex',
+              alignItems: 'center',
+              height: '64px',
+              fontFamily: 'Inter, Roboto, Arial, sans-serif',
+            }}
+          >
+            AI App Builder
+          </Typography>
 
-      {/* Subtitle */}
-      <Typography variant="subtitle1" gutterBottom>
-        Describe your app idea below
-      </Typography>
+          <Typography variant="subtitle1" gutterBottom>
+            Describe your app idea below
+          </Typography>
 
-      {/* Textarea */}
-      <TextField
-        multiline
-        rows={7}
-        fullWidth
-        placeholder="Describe your app idea..."
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        sx={{
-          mb: 3,
-          backgroundColor: "white",     // white background
-          borderRadius: 1,               // optional: rounded corners
-          "& .MuiInputBase-root": {
-            backgroundColor: "white",    // ensure inner input area is white
-          }
-     }}
-      />
+         <BasicTextArea
+          label="Describe your app idea..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
 
-      {/* Button */}
-      <Box>
-        {/* <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={handleGenerate}
-        > */}
-        <Button
-          variant="contained"
-          size="large"
-          onClick={handleGenerate}
-          sx={{
-            backgroundColor: "white",   // white button
-            color: "black",             // black text
-            textTransform: "none",
-            "&:hover": {
-              backgroundColor: "#f0f0f0", // light gray on hover
-              fontWeight: "bold",
-            }
-          }}
-        >
-          Generate App
-        </Button>
-      </Box>
-      {response && (
-            <div className="response">
-              <p>Generated App Details:</p>
-              <pre>{JSON.stringify(response, null, 2)}</pre>
-            </div>
-      )}
-    </Container>
-    </Box>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+           <BasicButton label="Generate App" onClick={handleGenerate} />
+          </Box>
+          {responseData && (
+            <Box sx={{ mt: 3 }}>
+              <ReferenceAccordion requirements={responseData} />
+            </Box>
+          )}
+       
+        </Container>
+      </Grid>
+
+      {/* Right side - Generated UI */}
+      <Grid item  sx={{ p: 1, height: "100vh",width : "65%", backgroundColor: "#fafafa" }}>
+        {!responseData ? (
+          <Typography variant="h5" color="textSecondary" align="center">
+            Your UI will load here
+          </Typography>
+        ) : (
+          <Box sx={{ flexGrow: 1, p: 2 }}>
+              <DynamicTabs roles={responseData.Roles} mapping={responseData.Mapping} />                  
+           </Box>
+        )}
+      </Grid>
+    </Grid>
   );
 }
 

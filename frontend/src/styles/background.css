@@ -1,9 +1,0 @@
-.background-container {
-  min-height: 100vh; /* full screen */
-  background-image: url('../assets/background.jpg');
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
