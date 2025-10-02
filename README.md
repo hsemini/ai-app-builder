@@ -258,8 +258,12 @@ http://localhost:3000
 
 ## Future Improvements
 
-* Add support for richer UI components (charts, navigation).
+* Add support for richer UI components (tables, simple forms, charts, etc.).
 * Extend AI requirement extraction to cover workflows, not just UI elements.
+* Provide support to update the user input "Description" after generating the UI.
+* Provide support to update the generated meta data and re-populate the UI generated.
+* Provide the support to download the ReactJS source code of the generated UI.
+* Provide the support to host the generated UI directly on a specific route path so that users will not have to explicitely deploy/host the web application UI they needed.
 * Add Docker Compose for easier setup (backend + frontend + MongoDB).
 
 ---
