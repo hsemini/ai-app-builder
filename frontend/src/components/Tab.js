@@ -151,7 +151,7 @@ export default function DynamicTabs({ appName, roles = [], mapping = {} }) {
             component="div"
             sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
           >
-            {"Tab Application Form Group" }
+            {"Tab Application Form Group"}
           </Typography>
           <Search>
             <SearchIconWrapper>
@@ -166,19 +166,19 @@ export default function DynamicTabs({ appName, roles = [], mapping = {} }) {
       </AppBar>
       <br></br>
 
-<Typography
-           variant="h6" style={{ margin: 0, paddingBottom: "0" }}
-            sx={{
-              color: 'primary.main',
-              fontWeight: 'bold',
-              p: 1,
-              display: 'flex',
-              alignItems: 'center',
-              height: '60px',
-              fontFamily: 'Inter, Roboto, Arial, sans-serif',
-            }}>
-            {"Course Management System"|| "Tab Application Form Group" }
-          </Typography>
+      <Typography
+        variant="h6" style={{ margin: 0, paddingBottom: "0" }}
+        sx={{
+          color: 'primary.main',
+          fontWeight: 'bold',
+          p: 1,
+          display: 'flex',
+          alignItems: 'center',
+          height: '60px',
+          fontFamily: 'Inter, Roboto, Arial, sans-serif',
+        }}>
+        {"Course Management System" || "Tab Application Form Group"}
+      </Typography>
 
       {/* ✅ Tabs under AppBar */}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -195,14 +195,14 @@ export default function DynamicTabs({ appName, roles = [], mapping = {} }) {
           {mapping[role] && (
             <Box>
               <Typography variant="h6" align="left" style={{ margin: 0, paddingBottom: "0" }}
-            sx={{
-              color: 'black',
-              p: 0,
-              display: 'flex',
-              alignItems: 'center',
-              height: '60px',
-              fontFamily: 'Inter, Roboto, Arial, sans-serif',
-            }}>
+                sx={{
+                  color: 'black',
+                  p: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  height: '60px',
+                  fontFamily: 'Inter, Roboto, Arial, sans-serif',
+                }}>
                 Form: {mapping[role].feature}
               </Typography>
               {mapping[role].fields.map((field, i) => (
