@@ -41,13 +41,15 @@ function App() {
       padding: 0,
     }}>
       {/* Left side - App Builder */}
-      <Grid item  sx={{
+      <Grid item paddingBottom={10} sx={{
         width : "35%",
-        backgroundColor: "#f5f5f5",
+        backgroundColor: "#ffffff",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
+        height: "100%",
+        borderRight: "2px solid #e0e0e0",
+        flexGrow: 1, 
         "&:hover": {
           backgroundColor: "#ffffff",
           boxShadow: 3,
@@ -55,49 +57,78 @@ function App() {
           zIndex: 1
         },
       }}>
-        <Container maxWidth="sm" sx={{ mt: 8, textAlign: "center", p: 1 }}>
+        <Container maxWidth="sm" sx={{ mt: 8, textAlign: "center", p: 0 }}>
           <Typography
-            variant="h6"
+            variant="h3"
             sx={{
               color: 'primary.main',
               fontWeight: 'bold',
               p: 1,
-              display: 'flex',
+              display: 'flex-start',
               alignItems: 'center',
               height: '64px',
               fontFamily: 'Inter, Roboto, Arial, sans-serif',
+              flexGrow: 1, 
             }}
           >
             AI App Builder
           </Typography>
 
           <Typography variant="subtitle1" gutterBottom>
-            Describe your app idea below
+            Describe Your App Idea Below
           </Typography>
 
          <BasicTextArea
-          label="Describe your app idea..."
+          label="Describe Your App Idea..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
-
           <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
            <BasicButton label="Generate App" onClick={handleGenerate} />
           </Box>
+
+       
+
+       {!responseData ? (
+          <Typography />
+         ) : (
+           <Typography  variant="h6" style={{ margin: 0, paddingBottom: "0" }}
+            sx={{
+              color: 'primary.main',
+              fontWeight: 'bold',
+              p: 1,
+              display: 'flex',
+              alignItems: 'center',
+              height: '60px',
+              fontFamily: 'Inter, Roboto, Arial, sans-serif',
+            }}>
+            AI Generated App Meta Data
+          </Typography>
+        )}
+
           {responseData && (
             <Box sx={{ mt: 3 }}>
               <ReferenceAccordion requirements={responseData} />
             </Box>
           )}
-       
+                 
         </Container>
       </Grid>
 
       {/* Right side - Generated UI */}
       <Grid item  sx={{ p: 1, height: "100vh",width : "65%", backgroundColor: "#fafafa" }}>
         {!responseData ? (
-          <Typography variant="h5" color="textSecondary" align="center">
-            Your UI will load here
+          <Typography variant="h6" color="textSecondary" sx={{
+    p: 1,
+    height: "100vh",
+    width: "65%",
+    backgroundColor: "#fafafa",
+    display: "flex",                // make it flex
+    flexDirection: "column",        // stack children vertically
+    justifyContent: "center",       // center vertically
+    alignItems: "center",           // center horizontally
+  }}>
+            Your UI will load here...
           </Typography>
         ) : (
           <Box sx={{ flexGrow: 1, p: 2 }}>

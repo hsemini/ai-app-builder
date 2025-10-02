@@ -131,7 +131,7 @@ export default function DynamicTabs({ appName, roles = [], mapping = {} }) {
             component="div"
             sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
           >
-            {appName || "Your App Name" }
+            {"Tab Application Form Group" }
           </Typography>
           <Search>
             <SearchIconWrapper>
@@ -144,6 +144,21 @@ export default function DynamicTabs({ appName, roles = [], mapping = {} }) {
           </Search>
         </Toolbar>
       </AppBar>
+      <br></br>
+
+<Typography
+           variant="h6" style={{ margin: 0, paddingBottom: "0" }}
+            sx={{
+              color: 'primary.main',
+              fontWeight: 'bold',
+              p: 1,
+              display: 'flex',
+              alignItems: 'center',
+              height: '60px',
+              fontFamily: 'Inter, Roboto, Arial, sans-serif',
+            }}>
+            {"Course Management System"|| "Tab Application Form Group" }
+          </Typography>
 
       {/* ✅ Tabs under AppBar */}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -159,7 +174,15 @@ export default function DynamicTabs({ appName, roles = [], mapping = {} }) {
         <CustomTabPanel key={role} value={value} index={index}>
           {mapping[role] && (
             <Box>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" align="left" style={{ margin: 0, paddingBottom: "0" }}
+            sx={{
+              color: 'black',
+              p: 0,
+              display: 'flex',
+              alignItems: 'center',
+              height: '60px',
+              fontFamily: 'Inter, Roboto, Arial, sans-serif',
+            }}>
                 Form: {mapping[role].feature}
               </Typography>
               {mapping[role].fields.map((field, i) => (
@@ -167,7 +190,7 @@ export default function DynamicTabs({ appName, roles = [], mapping = {} }) {
                   key={field}
                   sx={{ display: "flex", alignItems: "center", mb: 2 }}
                 >
-                  <Typography sx={{ width: "200px" }}>
+                  <Typography variant="subtitle1" sx={{ width: "200px" }}>
                     {i + 1}. {field}:
                   </Typography>
                   <TextField

@@ -16,21 +16,39 @@ export default function ReferenceAccordion({ requirements }) {
     <div>
       {/* App Name */}
       <Accordion >
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}sx={{
+      minHeight: "32px !important",   // reduce overall height
+      "& .MuiAccordionSummary-content": {
+        margin: 0,                    // remove extra margin
+      },
+      "& .MuiTypography-root": {
+        padding: 0,                   // remove Typography padding
+      },
+    }}>
           <Typography component="span">App Name</Typography>
         </AccordionSummary>
-        <AccordionDetails>
-          <Typography align='left'>{requirements["App Name"] || "N/A"}</Typography>
+        <AccordionDetails sx={{ p: 1 }}>
+          <Typography align='left' style={{ margin: 0, paddingLeft: "20px" }}>
+            {requirements["App Name"] || "N/A"}</Typography>
         </AccordionDetails>
       </Accordion>
 
       {/* Entities */}
       <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />} 
+        sx={{
+            minHeight: "32px !important",   // reduce overall height
+      "& .MuiAccordionSummary-content": {
+        margin: 0,                    // remove extra margin
+      },
+      "& .MuiTypography-root": {
+        padding: 0,                   // remove Typography padding
+      },
+    }}>
           <Typography component="span">Entities</Typography>
         </AccordionSummary>
-        <AccordionDetails>
-          <ul align ="left">
+        <AccordionDetails sx={{ p: 1 }}>
+          <ul align ="left" style={{ margin: 0, paddingLeft: "20px" }}>
             {entities.map((entity) => (
               <li key={entity}>{entity}</li>
             ))}
@@ -40,11 +58,19 @@ export default function ReferenceAccordion({ requirements }) {
 
       {/* Roles */}
       <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{
+      minHeight: "32px !important",   // reduce overall height
+      "& .MuiAccordionSummary-content": {
+        margin: 0,                    // remove extra margin
+      },
+      "& .MuiTypography-root": {
+        padding: 0,                   // remove Typography padding
+      },
+    }}>
           <Typography component="span">Roles</Typography>
         </AccordionSummary>
-        <AccordionDetails>
-          <ul align="left">
+        <AccordionDetails sx={{ p: 1 }}>
+          <ul align="left" style={{ margin: 0, paddingLeft: "20px" }}>
             {roles.map((role) => (
               <li key={role}>{role}</li>
             ))}
@@ -54,11 +80,19 @@ export default function ReferenceAccordion({ requirements }) {
 
       {/* Features */}
       <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{
+      minHeight: "32px !important",   // reduce overall height
+      "& .MuiAccordionSummary-content": {
+        margin: 0,                    // remove extra margin
+      },
+      "& .MuiTypography-root": {
+        padding: 0,                   // remove Typography padding
+      },
+    }}>
           <Typography component="span">Features</Typography>
         </AccordionSummary>
-        <AccordionDetails>
-          <ul align="left">
+        <AccordionDetails sx={{ p: 1 }}>
+          <ul align="left" style={{ margin: 0, paddingLeft: "20px" }}>
             {features.map((feature) => (
               <li key={feature}>{feature}</li>
             ))}
