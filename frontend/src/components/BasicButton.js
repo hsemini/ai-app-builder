@@ -18,7 +18,6 @@
  * A basic button component using Material-UI adapted to the application UI requirements.
  */
 
-import * as React from 'react';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 

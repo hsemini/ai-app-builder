@@ -18,14 +18,13 @@
  * This component displays the requirements in an accordion format using Material-UI components .
 */
 
-import * as React from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-export default function ReferenceAccordion({ requirements }) {
+export default function GeneratedMetaData({ requirements }) {
   if (!requirements) return null; // nothing to render until data exists
 
   const entities = requirements.Entities || [];

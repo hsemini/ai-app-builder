@@ -176,7 +176,7 @@ This design ensures **clear separation of responsibilities**, **scalability**, a
 
 ----
 
-## Tech Stack USed
+## Tech Stack Used
 
 * **Frontend:** React
 * **Backend:** Node.js

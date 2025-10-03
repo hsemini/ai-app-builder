@@ -25,7 +25,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Grid, Container } from "@mui/material";
 import "./App.css";
-import ReferenceAccordion from "./components/Accordion";
+import GeneratedMetaData from "./components/GeneratedMetaData";
 import BasicButton from "./components/BasicButton";
 import BasicTextArea from "./components/BasicTextArea";
 import DynamicTabs from "./components/Tab";
@@ -124,7 +124,7 @@ function App() {
 
           {responseData && (
             <Box sx={{ mt: 3 }}>
-              <ReferenceAccordion requirements={responseData} />
+              <GeneratedMetaData requirements={responseData} />
             </Box>
           )}
 

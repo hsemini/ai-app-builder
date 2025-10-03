@@ -18,7 +18,6 @@
  * A simple Paper component using Material-UI adapted to the application UI requirements.
  */
 
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 

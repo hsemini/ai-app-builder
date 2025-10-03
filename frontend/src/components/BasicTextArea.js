@@ -18,7 +18,6 @@
  * A basic text area component using Material-UI adapted to the application UI requirements.
  */
 
-import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 
